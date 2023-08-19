@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.adminbackend.dao.InvoiceMapper">
+
+
+    <select id="queryInvoiceId" parameterType="Map" resultType="Integer">
+        <if test="salesOrganization != null || distributionChannel != null">
+        (select invoice_id
+         from sales_order
+         where sold_to_party in (select customer_id from customer
+            <where>
+                <if test="salesOrganization != null">
+                    sales_org = #{salesOrganization}
+                </if>
+                <if test="distributionChannel != null">
+                    and distr_channel = #{distributionChannel}
+                </if>
+            </where>
+                                                    ))
+    </if>
+        <if test="billingDate != null || soldToParty != null">
+        <if test="salesOrganization != null || distributionChannel != null">  union</if>
+            (select invoice_id
+            from invoice
+           <where>
+               <if test="billingDate != null">
+                   billing_date = #{billingDate}
+               </if>
+                <if test="soldToParty != null">
+                    and sold_to_party = #{soldToParty}
+                </if>
+           </where>
+
+            )
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.adminbackend.dao.DeliveryMapper">
+
+    <insert id="createDelivery">
+        insert into delivery (order_id, ship_to_party, delivery_date)
+        select sales_order.order_id, sales_order.ship_to_party, #{date}
+        from sales_order
+        where sales_order.order_id = #{orderId}
+    </insert>
+    <insert id="createDeliveryItem">
+        insert into delivery_item (delivery_id, material_id, original_delivery_quantity)
+        select delivery.delivery_id, details.material_id, details.quantity as original_delivery_quantity
+        from delivery, sales_order, details
+        where sales_order.order_id = #{orderId} and
+        delivery.order_id = sales_order.order_id and
+        sales_order.order_id = details.order_id
+    </insert>
+
+    <update id="pickComplete">
+        update delivery
+        set
+        delivery.picking_status = true, delivery.picking_date = #{date},
+        delivery.net_weight =
+            (SELECT sum(material.net_weight * delivery_item.picking_quantity)
+            FROM delivery_item, material
+            where 	delivery_item.delivery_id = #{deliveryId} and
+            delivery_item.material_id = material.material_id),
+        delivery.gross_weight =
+            (SELECT sum(material.gross_weight * delivery_item.picking_quantity)
+            FROM delivery_item, material
+            where 	delivery_item.delivery_id = #{deliveryId} and
+            delivery_item.material_id = material.material_id)
+        where delivery.delivery_id = #{deliveryId}
+    </update>
+
+
+    <update id="DeliveryGI">
+        update delivery
+        set gi_status = true, planned_gi_date = #{plannedGiDate}
+        where delivery.delivery_id = #{deliveryId}
+    </update>
+    <update id="StockGI">
+        update delivery_item, stock
+        set
+        stock.on_order_stock = stock.on_order_stock - (SELECT picking_quantity)
+        where
+        delivery_item.delivery_id = #{deliveryId} and
+        stock.plant_id = delivery_item.plant_id and
+        delivery_item.material_id = stock.material_id
+    </update>
+
+    <delete id="deleteUpdateStock">
+        update delivery_item, stock
+        set
+        stock.on_order_stock = stock.on_order_stock - (SELECT picking_quantity),
+        stock.unrestricted_use_stock = stock.unrestricted_use_stock + (SELECT picking_quantity)
+        where
+        delivery_item.delivery_id = #{deliveryId} and
+        stock.plant_id = delivery_item.plant_id and
+        delivery_item.material_id = stock.material_id
+    </delete>
+    <delete id="deleteDelivery">
+        delete from delivery where delivery_id = #{deliveryId}
+    </delete>
+    <delete id="deleteDeliveryItem">
+        delete from delivery_item where delivery_id = #{deliveryId}
+    </delete>
+
+    <select id="findPage" resultType="com.project.adminbackend.pojo.Delivery">
+        select * from delivery
+        <where>
+            <if test="orderId != null and orderId != ''">
+                order_id = #{orderId}
+            </if>
+            <if test="deliveryId != null and deliveryId != ''">
+                and delivery_id = #{deliveryId}
+            </if>
+            <if test="shipToParty != null and shipToParty != ''">
+                and ship_to_party = #{shipToParty}
+            </if>
+            <if test="giStatus != null and giStatus != ''">
+                and gi_status = #{giStatus}
+            </if>
+            <if test="pickingStatus != null and pickingStatus != ''">
+                and picking_status = #{pickingStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="findSpecificDelivery" resultType="com.project.adminbackend.pojo.Delivery">
+        select * from delivery
+        <where>
+            <if test="orderId != null and orderId != ''">
+                order_id = #{orderId}
+            </if>
+            <if test="deliveryId != null and deliveryId != ''">
+                and delivery_id = #{deliveryId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/admin-backend/admin-backend.iml" filepath="$PROJECT_DIR$/admin-backend/admin-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/backend.iml" filepath="$PROJECT_DIR$/.idea/backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sdorder/sdorder.iml" filepath="$PROJECT_DIR$/sdorder/sdorder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/customer_back_end/vuedemo.iml" filepath="$PROJECT_DIR$/customer_back_end/vuedemo.iml" />
+    </modules>
+  </component>
+</project>

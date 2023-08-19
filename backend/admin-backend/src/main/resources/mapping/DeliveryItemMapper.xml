@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.adminbackend.dao.DeliveryItemMapper">
+
+    <select id="findDeliveryItemList" resultType="com.project.adminbackend.pojo.DeliveryItem">
+        select delivery_item.*, material.name as name from delivery, delivery_item, material
+        where delivery.delivery_id = #{deliveryId} and
+        delivery.delivery_id = delivery_item.delivery_id and
+        delivery_item.material_id = material.material_id
+    </select>
+
+    <update id="pickStockReverse">
+        update delivery_item, stock
+        set
+        stock.on_order_stock = stock.on_order_stock - #{quantityOriginal},
+        stock.unrestricted_use_stock = stock.unrestricted_use_stock + #{quantityOriginal}
+        where
+        delivery_item.delivery_item_id = #{deliveryItemId} and
+        stock.plant_id = #{plantIdOriginal} and
+        delivery_item.material_id = stock.material_id
+    </update>
+    <update id="pickItemUpdate">
+        update delivery_item
+        set
+        plant_id = #{plantIdUpdated},
+        picking_quantity = #{quantityUpdated},
+        picking_status = true
+        where delivery_item_id = #{deliveryItemId}
+    </update>
+    <update id="pickStockUpdate">
+        update delivery_item, stock
+        set
+        stock.on_order_stock = stock.on_order_stock + #{quantityUpdated},
+        stock.unrestricted_use_stock = stock.unrestricted_use_stock - #{quantityUpdated}
+        where
+        delivery_item.delivery_item_id = #{deliveryItemId} and
+        stock.plant_id = #{plantIdUpdated} and
+        delivery_item.material_id = stock.material_id
+    </update>
+
+</mapper>

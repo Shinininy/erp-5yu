@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.adminbackend.dao.StockMapper">
+    <select id="queryStockId" parameterType="Map" resultType="Integer">
+        select s.stock_id from plant p inner join stock s on #{plantId} = s.plant_id
+           <if test="storageLocation != null">
+               and s.plant_id in (select plant_id from plant where storage_location = #{storageLocation})
+           </if>
+            <if test="materialId != null">
+                inner join material m on s.material_id = #{materialId}
+            </if>
+        group by s.stock_id;
+    </select>
+
+    <select id="queryStockInfo" resultType="Map" parameterType="List" >
+        select m.material_id as materialId, m.name as materialName, s.reserved_stock as
+                                reservedStock, s.unrestricted_use_stock as unrestrictedUseStock, s.on_order_stock as onOrderStock, p.plant_id as plantId,
+               p.storage_location as storageLocation
+        from plant p inner join stock s on p.plant_id = s.plant_id
+                     inner join material m on s.material_id = m.material_id where s.stock_id in
+        <foreach collection="list" open="(" close=")" separator="," item="temp">
+            #{temp}
+        </foreach>
+    </select>
+</mapper>

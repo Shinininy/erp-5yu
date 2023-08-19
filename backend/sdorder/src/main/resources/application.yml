@@ -1,0 +1,28 @@
+server:
+  port: 8889
+spring:
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+  mvc:
+    static-path-pattern: /images/**
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  web:
+    resources:
+      static-locations: classpath:/css
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/factors?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    hikari:
+      minimum-idle: 8
+      maximum-pool-size: 20
+# mybatis-plus??
+mybatis-plus:
+  type-aliases-package: com.op.mapper
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+

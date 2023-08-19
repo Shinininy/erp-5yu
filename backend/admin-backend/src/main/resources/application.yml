@@ -1,0 +1,26 @@
+server:
+    ip: localhost
+    port: 8888
+
+spring:
+#    datasource:
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://localhost:3306/erpplussd?serverTimezone=GMT%2b8
+#        username: root
+#        password: wjj2452483723
+    datasource:
+        driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+        type: org.apache.commons.dbcp2.BasicDataSource
+        url: jdbc:p6spy:mysql://root@localhost:3306/factors?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
+        username: root
+        password: 123456
+
+mybatis:
+    mapper-locations: classpath:mapping/*.xml
+    type-aliases-package: com.project.adminbackend.pojo
+
+mybatis-plus:
+    mapper-locations: classpath:mapping/*.xml
+    type-aliases-package: com.project.adminbackend.pojo
+    configuration:
+        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

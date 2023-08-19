@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.adminbackend.dao.SalesOrderMapper">
+
+    <select id="findPage" resultType="com.project.adminbackend.pojo.SalesOrder">
+         select * from sales_order
+         where not exists (select * from delivery where delivery.order_id = sales_order.order_id)
+         <if test="orderId != null and orderId != ''">
+             and order_id = #{orderId}
+         </if>
+         <if test="shipToParty != null and shipToParty != ''">
+             and ship_to_party = #{shipToParty}
+         </if>
+    </select>
+</mapper>

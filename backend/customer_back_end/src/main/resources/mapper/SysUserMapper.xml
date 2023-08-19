@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.vuedemo.dao.SysUserMapper">
+
+    <resultMap type="com.sunline.vuedemo.bean.SysUser" id="SysUserMap">
+        <result property="userId" column="USER_ID" jdbcType="VARCHAR"/>
+        <result property="tenantId" column="TENANT_ID" jdbcType="VARCHAR"/>
+        <result property="userName" column="USER_NAME" jdbcType="VARCHAR"/>
+        <result property="userCode" column="USER_CODE" jdbcType="VARCHAR"/>
+        <result property="password" column="PASSWORD" jdbcType="VARCHAR"/>
+        <result property="orgId" column="ORG_ID" jdbcType="VARCHAR"/>
+        <result property="mobile" column="MOBILE" jdbcType="VARCHAR"/>
+        <result property="userTypeCode" column="USER_TYPE_CODE" jdbcType="VARCHAR"/>
+        <result property="userStatusCode" column="USER_STATUS_CODE" jdbcType="VARCHAR"/>
+        <result property="createdBy" column="CREATED_BY" jdbcType="VARCHAR"/>
+        <result property="createdTime" column="CREATED_TIME" jdbcType="TIMESTAMP"/>
+        <result property="updatedBy" column="UPDATED_BY" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="UPDATED_TIME" jdbcType="TIMESTAMP"/>
+        <result property="modiNum" column="MODI_NUM" jdbcType="NUMERIC"/>
+        <result property="lockTime" column="LOCK_TIME" jdbcType="TIMESTAMP"/>
+        <result property="passwordRetries" column="PASSWORD_RETRIES" jdbcType="NUMERIC"/>
+        <result property="passwordUpdateTime" column="PASSWORD_UPDATE_TIME" jdbcType="TIMESTAMP"/>
+        <result property="userSkin" column="USER_SKIN" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysUserMap">
+        select USER_ID,
+               TENANT_ID,
+               USER_NAME,
+               USER_CODE,
+               PASSWORD,
+               ORG_ID,
+               MOBILE,
+               USER_TYPE_CODE,
+               USER_STATUS_CODE,
+               CREATED_BY,
+               CREATED_TIME,
+               UPDATED_BY,
+               UPDATED_TIME,
+               MODI_NUM,
+               LOCK_TIME,
+               PASSWORD_RETRIES,
+               PASSWORD_UPDATE_TIME,
+               USER_SKIN
+        from sys_user
+        where USER_ID = #{userId}
+    </select>
+
+
+    <select id="queryAll" resultMap="SysUserMap">
+        <bind name="key_offset" value="5*(currentPage-1)"></bind>
+        <bind name="key_offset2" value="5*(currentPage)"></bind>
+        select *
+        from sys_user limit #{key_offset},#{key_offset2}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" >
+
+        <selectKey keyProperty="userId" resultType="java.lang.String" order="BEFORE">
+            select replace(uuid(),'-','') AS USER_ID
+        </selectKey>
+        insert into sys_user(USER_ID,TENANT_ID, USER_NAME, USER_CODE, PASSWORD, ORG_ID, MOBILE, USER_TYPE_CODE,
+                                  USER_STATUS_CODE, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, MODI_NUM,
+                                  LOCK_TIME, PASSWORD_RETRIES, PASSWORD_UPDATE_TIME, USER_SKIN)
+        values (#{userId,jdbcType=VARCHAR},#{tenantId}, #{userName}, #{userCode}, #{password}, #{orgId}, #{mobile}, #{userTypeCode},
+                #{userStatusCode}, #{createdBy}, #{createdTime}, #{updatedBy}, #{updatedTime}, #{modiNum}, #{lockTime},
+                #{passwordRetries}, #{passwordUpdateTime}, #{userSkin})
+    </insert>
+
+
+
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update sys_user
+        <set>
+            <if test="tenantId != null and tenantId != ''">
+                TENANT_ID = #{tenantId},
+            </if>
+            <if test="userName != null and userName != ''">
+                USER_NAME = #{userName},
+            </if>
+            <if test="userCode != null and userCode != ''">
+                USER_CODE = #{userCode},
+            </if>
+            <if test="password != null and password != ''">
+                PASSWORD = #{password},
+            </if>
+            <if test="orgId != null and orgId != ''">
+                ORG_ID = #{orgId},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                MOBILE = #{mobile},
+            </if>
+            <if test="userTypeCode != null and userTypeCode != ''">
+                USER_TYPE_CODE = #{userTypeCode},
+            </if>
+            <if test="userStatusCode != null and userStatusCode != ''">
+                USER_STATUS_CODE = #{userStatusCode},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                CREATED_BY = #{createdBy},
+            </if>
+            <if test="createdTime != null">
+                CREATED_TIME = #{createdTime},
+            </if>
+            <if test="updatedBy != null and updatedBy != ''">
+                UPDATED_BY = #{updatedBy},
+            </if>
+            <if test="updatedTime != null">
+                UPDATED_TIME = #{updatedTime},
+            </if>
+            <if test="modiNum != null">
+                MODI_NUM = #{modiNum},
+            </if>
+            <if test="lockTime != null">
+                LOCK_TIME = #{lockTime},
+            </if>
+            <if test="passwordRetries != null">
+                PASSWORD_RETRIES = #{passwordRetries},
+            </if>
+            <if test="passwordUpdateTime != null">
+                PASSWORD_UPDATE_TIME = #{passwordUpdateTime},
+            </if>
+            <if test="userSkin != null and userSkin != ''">
+                USER_SKIN = #{userSkin},
+            </if>
+        </set>
+        where USER_ID = #{userId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from sys_user
+        where USER_ID = #{userId}
+    </delete>
+
+</mapper>
